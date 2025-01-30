@@ -3,9 +3,12 @@ const express = require("express");
 const app= express();
 
 const users= require("./MOCK_DATA.json");
-
+const fs= require("fs");
 
 const port= 8000;
+
+app.use(express.urlencoded({extended: false})); // plugin or a middleware
+
 //routes
 
 app.get("/api/users", (req,res)=>{
@@ -23,9 +26,15 @@ app.get("/api/users/:id", (req,res)=>{  //Dynamic Path Parammeters
 
 
 app.post("/api/users" , (req,res)=>{
-   
+    const body = req.body;
+    users.push({...body, id: users.length +1});
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err,data)=>{
+         
+        return res.json({Status: "pending"});
+    });
+
     //TODO - create the user
-    return res.json({Status: "pending"});
+    
 });
 
 app.patch("/api/users/:id" , (req,res)=>{
@@ -39,9 +48,6 @@ app.delete("/api/users/:id" , (req,res)=>{
     //TODO - delete the user id with id
     return res.json({Status: "pending"});
 });
-
-
-
 
 
 app.listen(port, ()=> console.log(`Server Started at port ${port}`));
